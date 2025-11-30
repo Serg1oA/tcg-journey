@@ -1,13 +1,33 @@
-import { Link } from "expo-router";
-import { Text, View, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useRouter, Href } from "expo-router";
 
 export default function Index() {
+  const router = useRouter();
+
+  const games = [
+    { id: 'pokemon', name: 'Pokémon TCG', color: 'lightskyblue', route: '/pokemon' as Href },
+    { id: 'lorcana', name: 'Lorcana', color: 'pink', route: '/lorcana' as Href },
+    { id: 'gwent', name: 'Gwent', color: 'lightsalmon', route: '/gwent' as Href }
+  ];
+
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Hello, world!</Text>
-      <Link href={"/about"} style={styles.button}>
-        Go to About Screen
-      </Link>
+      {games.map(game => (
+        <TouchableOpacity
+          key={game.id}
+          onPress={() => router.push(game.route)}
+          style={[
+            styles.gameButton,
+            { borderColor: game.color }
+          ]}
+        >
+          <Text 
+            style={styles.gameButtonText}
+          >
+            {game.name}
+          </Text>
+        </TouchableOpacity>
+      ))}
     </View>
   );
 }
@@ -15,16 +35,22 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#131313ff"
+    backgroundColor: '#000',
+    justifyContent: 'center',
+    padding: 20
   },
-  text: {
-    color: "white"
+
+  gameButton: {
+    padding: 24,
+    marginBottom: 16,
+    alignItems: 'center',
+    borderWidth: 2,
+    backgroundColor: '#000',
   },
-  button: {
-    fontSize: 20,
-    textDecorationLine: "underline",
-    color: "white"
+  
+  gameButtonText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#fff',
   }
 });
