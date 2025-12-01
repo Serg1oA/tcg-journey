@@ -14,6 +14,7 @@ export default function History({ game, gameColor }: HistoryProps) {
   const { results, decks, players, deleteResult, updateResult } = useStorage();
   const [editingResult, setEditingResult] = useState<GameResult | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showStatsModal, setShowStatsModal] = useState(false);
   const [editPlayer1, setEditPlayer1] = useState('');
   const [editPlayer1Deck, setEditPlayer1Deck] = useState('');
   const [editPlayer2, setEditPlayer2] = useState('');
@@ -102,8 +103,86 @@ export default function History({ game, gameColor }: HistoryProps) {
     setEditingResult(null);
   };
 
+  // Calculate player stats
+  const calculatePlayerStats = () => {
+    const playerStats: { [key: string]: { wins: number; total: number; name: string } } = {};
+
+    gameResults.forEach(result => {
+      // Initialize players if not exists
+      if (!playerStats[result.player1]) {
+        playerStats[result.player1] = { wins: 0, total: 0, name: getPlayerName(result.player1) };
+      }
+      if (!playerStats[result.player2]) {
+        playerStats[result.player2] = { wins: 0, total: 0, name: getPlayerName(result.player2) };
+      }
+
+      // Count total games
+      playerStats[result.player1].total++;
+      playerStats[result.player2].total++;
+
+      // Count wins
+      if (result.winner === result.player1) {
+        playerStats[result.player1].wins++;
+      } else {
+        playerStats[result.player2].wins++;
+      }
+    });
+
+    return Object.entries(playerStats).map(([id, stats]) => ({
+      id,
+      name: stats.name,
+      wins: stats.wins,
+      total: stats.total,
+      winrate: stats.total > 0 ? ((stats.wins / stats.total) * 100).toFixed(1) : '0.0'
+    })).sort((a, b) => parseFloat(b.winrate) - parseFloat(a.winrate));
+  };
+
+  // Calculate deck stats
+  const calculateDeckStats = () => {
+    const deckStats: { [key: string]: { wins: number; total: number; name: string } } = {};
+
+    gameResults.forEach(result => {
+      // Initialize decks if not exists
+      if (!deckStats[result.player1Deck]) {
+        deckStats[result.player1Deck] = { wins: 0, total: 0, name: getDeckName(result.player1Deck) };
+      }
+      if (!deckStats[result.player2Deck]) {
+        deckStats[result.player2Deck] = { wins: 0, total: 0, name: getDeckName(result.player2Deck) };
+      }
+
+      // Count total games
+      deckStats[result.player1Deck].total++;
+      deckStats[result.player2Deck].total++;
+
+      // Count wins
+      const winningDeck = result.winner === result.player1 ? result.player1Deck : result.player2Deck;
+      deckStats[winningDeck].wins++;
+    });
+
+    return Object.entries(deckStats).map(([id, stats]) => ({
+      id,
+      name: stats.name,
+      wins: stats.wins,
+      total: stats.total,
+      winrate: stats.total > 0 ? ((stats.wins / stats.total) * 100).toFixed(1) : '0.0'
+    })).sort((a, b) => parseFloat(b.winrate) - parseFloat(a.winrate));
+  };
+
+  const playerStats = calculatePlayerStats();
+  const deckStats = calculateDeckStats();
+
   return (
     <View style={styles.container}>
+      {/* Header with Stats Button */}
+      <View style={styles.header}>
+        <TouchableOpacity
+          onPress={() => setShowStatsModal(true)}
+          style={[styles.statsButton, { borderColor: gameColor }]}
+        >
+          <Text style={styles.statsButtonText}>Stats</Text>
+        </TouchableOpacity>
+      </View>
+
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         {gameResults.length === 0 ? (
           <View style={styles.emptyState}>
@@ -170,6 +249,60 @@ export default function History({ game, gameColor }: HistoryProps) {
           })
         )}
       </ScrollView>
+
+      {/* Stats Modal */}
+      <Modal visible={showStatsModal} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={[styles.statsModalContent, { borderColor: gameColor }]}>
+            <Text style={styles.statsModalTitle}>Statistics</Text>
+            
+            <View style={styles.statsContainer}>
+              {/* Players Stats */}
+              <View style={styles.statsColumn}>
+                <Text style={styles.statsColumnTitle}>Players</Text>
+                <ScrollView style={styles.statsScroll}>
+                  {playerStats.length === 0 ? (
+                    <Text style={styles.emptyStatsText}>No player data</Text>
+                  ) : (
+                    playerStats.map(player => (
+                      <View key={player.id} style={[styles.statItem, { borderColor: gameColor }]}>
+                        <Text style={styles.statName}>{player.name}</Text>
+                        <Text style={styles.statDetails}>{player.wins}W - {player.total - player.wins}L</Text>
+                        <Text style={[styles.statWinrate, { color: gameColor }]}>{player.winrate}%</Text>
+                      </View>
+                    ))
+                  )}
+                </ScrollView>
+              </View>
+
+              {/* Decks Stats */}
+              <View style={styles.statsColumn}>
+                <Text style={styles.statsColumnTitle}>Decks</Text>
+                <ScrollView style={styles.statsScroll}>
+                  {deckStats.length === 0 ? (
+                    <Text style={styles.emptyStatsText}>No deck data</Text>
+                  ) : (
+                    deckStats.map(deck => (
+                      <View key={deck.id} style={[styles.statItem, { borderColor: gameColor }]}>
+                        <Text style={styles.statName}>{deck.name}</Text>
+                        <Text style={styles.statDetails}>{deck.wins}W - {deck.total - deck.wins}L</Text>
+                        <Text style={[styles.statWinrate, { color: gameColor }]}>{deck.winrate}%</Text>
+                      </View>
+                    ))
+                  )}
+                </ScrollView>
+              </View>
+            </View>
+
+            <TouchableOpacity
+              onPress={() => setShowStatsModal(false)}
+              style={[styles.closeStatsButton, { borderColor: gameColor }]}
+            >
+              <Text style={styles.closeStatsButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
       {/* Edit Modal */}
       <Modal visible={showEditModal} transparent animationType="fade">
@@ -287,6 +420,23 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#000'
   },
+  header: {
+    padding: 16,
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#333'
+  },
+  statsButton: {
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderWidth: 2,
+    backgroundColor: '#000'
+  },
+  statsButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold'
+  },
   scrollViewContent: {
     padding: 20
   },
@@ -369,6 +519,77 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.9)',
     justifyContent: 'center',
     alignItems: 'center'
+  },
+  statsModalContent: {
+    backgroundColor: '#1A1A1A',
+    padding: 20,
+    width: '95%',
+    height: '80%',
+    borderWidth: 2
+  },
+  statsModalTitle: {
+    color: 'white',
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 20
+  },
+  statsContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    gap: 12
+  },
+  statsColumn: {
+    flex: 1
+  },
+  statsColumnTitle: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 12,
+    textAlign: 'center'
+  },
+  statsScroll: {
+    flex: 1
+  },
+  statItem: {
+    backgroundColor: '#000',
+    padding: 12,
+    marginBottom: 8,
+    borderWidth: 2
+  },
+  statName: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 4
+  },
+  statDetails: {
+    color: '#888',
+    fontSize: 12,
+    marginBottom: 4
+  },
+  statWinrate: {
+    fontSize: 18,
+    fontWeight: 'bold'
+  },
+  emptyStatsText: {
+    color: '#666',
+    fontSize: 14,
+    textAlign: 'center',
+    marginTop: 20
+  },
+  closeStatsButton: {
+    marginTop: 16,
+    padding: 12,
+    borderWidth: 2,
+    alignItems: 'center',
+    backgroundColor: '#000'
+  },
+  closeStatsButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold'
   },
   modalContent: {
     backgroundColor: '#1A1A1A',
