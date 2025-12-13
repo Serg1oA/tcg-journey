@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "tcg-journey",
+    "name": "TCG Journey",
     "slug": "tcg-journey",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -18,7 +18,13 @@
     "android": {
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.serg1oa.tcgjourney"
+      "package": "com.serg1oa.tcgjourney",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundColor": "#000000"
+      },
+      "permissions": []
     },
     "androidStatusBar": {
       "hidden": true,
@@ -30,7 +36,7 @@
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/splash-icon.png"
     },
     "plugins": [
       "expo-router",

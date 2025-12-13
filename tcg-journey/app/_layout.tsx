@@ -25,13 +25,36 @@ export default function RootLayout() {
           statusBarHidden: true,
         }}
       >
-        <Stack.Screen
-          name="index"
-          options={{ headerTitle: "TCG Journey" }}
-        />
+        <Stack.Screen name="index" options={{ headerTitle: "TCG Journey" }} />
         <Stack.Screen name="pokemon/index" options={{ headerTitle: "Pokémon TCG" }} />
         <Stack.Screen name="lorcana/index" options={{ headerTitle: "Lorcana" }} />
         <Stack.Screen name="gwent/index" options={{ headerTitle: "Gwent" }} />
+
+        <Stack.Screen name="pokemon/clocksingle" options={{ headerTitle: "Pokémon TCG | Single Clock" }} />
+        <Stack.Screen name="pokemon/clockstopwatch" options={{ headerTitle: "Pokémon TCG | Stopwatch" }} />
+        <Stack.Screen name="pokemon/clocktwoplayer" options={{ headerTitle: "Pokémon TCG | 2-Player Clock" }} />
+        <Stack.Screen name="pokemon/decks" options={{ headerTitle: "Pokémon TCG | Decks" }} />
+        <Stack.Screen name="pokemon/history" options={{ headerTitle: "Pokémon TCG | History" }} />
+        <Stack.Screen name="pokemon/players" options={{ headerTitle: "All Players" }} />
+        <Stack.Screen name="pokemon/results" options={{ headerTitle: "Pokémon TCG | Results" }} />
+
+        <Stack.Screen name="lorcana/clocksingle" options={{ headerTitle: "Lorcana | Single Clock" }} />
+        <Stack.Screen name="lorcana/clockstopwatch" options={{ headerTitle: "Lorcana | Stopwatch" }} />
+        <Stack.Screen name="lorcana/clocktwoplayer" options={{ headerTitle: "Lorcana | 2-Player Clock" }} />
+        <Stack.Screen name="lorcana/decks" options={{ headerTitle: "Lorcana | Decks" }} />
+        <Stack.Screen name="lorcana/history" options={{ headerTitle: "Lorcana | History" }} />
+        <Stack.Screen name="lorcana/lore" options={{ headerTitle: "Lorcana | Lore Counter" }} />
+        <Stack.Screen name="lorcana/players" options={{ headerTitle: "All Players" }} />
+        <Stack.Screen name="lorcana/results" options={{ headerTitle: "Lorcana | Results" }} />
+
+        <Stack.Screen name="gwent/clocksingle" options={{ headerTitle: "Gwent | Single Clock" }} />
+        <Stack.Screen name="gwent/clockstopwatch" options={{ headerTitle: "Gwent | Stopwatch" }} />
+        <Stack.Screen name="gwent/clocktwoplayer" options={{ headerTitle: "Gwent | 2-Player Clock" }} />
+        <Stack.Screen name="gwent/decks" options={{ headerTitle: "Gwent | Decks" }} />
+        <Stack.Screen name="gwent/history" options={{ headerTitle: "Gwent | History" }} />
+        <Stack.Screen name="gwent/players" options={{ headerTitle: "All Players" }} />
+        <Stack.Screen name="gwent/results" options={{ headerTitle: "Gwent | Results" }} />
+        <Stack.Screen name="gwent/strength" options={{ headerTitle: "Gwent | Strength Counter" }} />
       </Stack>
     </StorageProvider>
   );
