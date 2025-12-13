@@ -35,11 +35,13 @@ A React Native mobile app that provides essential tools for tabletop card game p
 
 ## 🛠️ Upcoming Features / Improvements
 
-- Improved clock editing features (allow user to enter a different min:sec value for each clock)
-- "Stats" section to view player and deck win totals and win rates
-- FAQ section with game-specific rule references, e.g.: how Confusion works in Pokémon TCG
-- Additional game support (Magic: The Gathering, Yu-Gi-Oh!)
-- Cloud sync across devices
+| Feature   | Status    |
+| --------- | --------- |
+| Improved clock editing features (allow user to enter a different min:sec value for each clock) | Not started |
+| "Stats" section to view player and deck win totals and win rates | ✅ Completed |
+| FAQ section with game-specific rule references, e.g.: how Confusion works in Pokémon TCG | Not started |
+| Additional game support (Magic: The Gathering, Yu-Gi-Oh!) | Not started |
+| Cloud sync across devices | Not started |
 
 #### SVG Credits:
 
