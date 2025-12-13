@@ -1,14 +1,28 @@
 import { Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
+import * as NavigationBar from "expo-navigation-bar";
+import { Platform } from "react-native";
 import { StorageProvider } from "./context/StorageContext";
 
 export default function RootLayout() {
+  useEffect(() => {
+    // Hide Android navigation bar on mount
+    if (Platform.OS === 'android') {
+      NavigationBar.setVisibilityAsync("hidden");
+      NavigationBar.setBehaviorAsync("overlay-swipe");
+    }
+  }, []);
+
   return (
     <StorageProvider>
+      <StatusBar hidden={true} />
       <Stack
         screenOptions={{
           headerStyle: { backgroundColor: '#000' },
           headerTintColor: '#fff',
-          headerTitleStyle: { fontWeight: 'bold' }
+          headerTitleStyle: { fontWeight: 'bold' },
+          statusBarHidden: true,
         }}
       >
         <Stack.Screen
