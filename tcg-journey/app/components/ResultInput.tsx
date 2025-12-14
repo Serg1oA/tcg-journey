@@ -67,13 +67,13 @@ export default function ResultInput({ game, gameColor }: ResultInputProps) {
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         {gameDecks.length === 0 ? (
-          <View style={styles.warningBox}>
-            <Text style={styles.warningText}>Oops... No decks available</Text>
+          <View style={[styles.warningBox, { borderColor: gameColor }]}>
+            <Text style={[styles.warningText, { color: gameColor }]}>Oops... No decks available</Text>
             <Text style={styles.warningSubtext}>Please add decks first</Text>
           </View>
         ) : players.length === 0 ? (
-          <View style={styles.warningBox}>
-            <Text style={styles.warningText}>Oops... No players available</Text>
+          <View style={[styles.warningBox, { borderColor: gameColor }]}>
+            <Text style={[styles.warningText, { color: gameColor }]}>Oops... No players available</Text>
             <Text style={styles.warningSubtext}>Please add players first</Text>
           </View>
         ) : (
@@ -194,14 +194,11 @@ const styles = StyleSheet.create({
   warningBox: {
     backgroundColor: '#1A1A1A',
     padding: 24,
-    borderRadius: 12,
     alignItems: 'center',
     marginTop: 40,
     borderWidth: 2,
-    borderColor: 'lightsalmon'
   },
   warningText: {
-    color: 'salmon',
     fontSize: 18,
     fontWeight: '600',
     marginBottom: 8
