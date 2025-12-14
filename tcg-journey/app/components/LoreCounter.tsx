@@ -58,7 +58,7 @@ export default function LoreCounter({ gameColor }: LoreCounterProps) {
           <ResetIcon width={20} height={20} stroke="#fff" />
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => router.back()}
+          onPress={() => router.push("/")}
           style={[styles.controlButton, { borderColor: gameColor }]}
         >
           <HomeIcon width={20} height={20} stroke="#fff" />
