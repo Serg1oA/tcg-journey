@@ -17,7 +17,9 @@ export default function TwoPlayerClock({ gameColor }: TwoPlayerClockProps) {
   const [activePlayer, setActivePlayer] = useState<1 | 2 | null>(null);
   const [isPaused, setIsPaused] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
+  const [editingPlayer, setEditingPlayer] = useState<1 | 2>(1);
   const [editMinutes, setEditMinutes] = useState('12');
+  const [editSeconds, setEditSeconds] = useState('0');
 
   useEffect(() => {
     if (activePlayer && !isPaused) {
@@ -53,15 +55,25 @@ export default function TwoPlayerClock({ gameColor }: TwoPlayerClockProps) {
     setIsPaused(false);
   };
 
+  const handleOpenEdit = (player: 1 | 2) => {
+    const time = player === 1 ? player1Time : player2Time;
+    const mins = Math.floor(time / 60);
+    const secs = time % 60;
+    setEditMinutes(mins.toString());
+    setEditSeconds(secs.toString());
+    setEditingPlayer(player);
+    setShowEdit(true);
+  };
+
   const handleEdit = () => {
-    const newTime = parseInt(editMinutes) * 60;
-    if (!isNaN(newTime) && newTime > 0) {
-      if (activePlayer === 1) {
+    const mins = parseInt(editMinutes) || 0;
+    const secs = parseInt(editSeconds) || 0;
+    const newTime = (mins * 60) + secs;
+    
+    if (newTime > 0) {
+      if (editingPlayer === 1) {
         setPlayer1Time(newTime);
-      } else if (activePlayer === 2) {
-        setPlayer2Time(newTime);
       } else {
-        setPlayer1Time(newTime);
         setPlayer2Time(newTime);
       }
     }
@@ -105,18 +117,34 @@ export default function TwoPlayerClock({ gameColor }: TwoPlayerClockProps) {
         >
           <PauseIcon width={20} height={20} stroke="#fff" />
         </TouchableOpacity>
+        
         <TouchableOpacity
           onPress={handleReset}
           style={[styles.controlButton, { borderColor: gameColor }]}
         >
           <ResetIcon width={20} height={20} stroke="#fff" />
         </TouchableOpacity>
+        
         <TouchableOpacity
-          onPress={() => setShowEdit(true)}
-          style={[styles.controlButton, { borderColor: gameColor }]}
+          onPress={() => handleOpenEdit(1)}
+          style={[styles.controlButton, styles.editButton, { borderColor: gameColor }]}
         >
-          <PencilIcon width={20} height={20} stroke="#fff" />
+          <View style={styles.editButtonContent}>
+            <PencilIcon width={16} height={16} stroke="#fff" />
+            <Text style={styles.editButtonText}>1</Text>
+          </View>
         </TouchableOpacity>
+        
+        <TouchableOpacity
+          onPress={() => handleOpenEdit(2)}
+          style={[styles.controlButton, styles.editButton, { borderColor: gameColor }]}
+        >
+          <View style={styles.editButtonContent}>
+            <PencilIcon width={16} height={16} stroke="#fff" />
+            <Text style={styles.editButtonText}>2</Text>
+          </View>
+        </TouchableOpacity>
+        
         <TouchableOpacity
           onPress={() => router.push("/")}
           style={[styles.controlButton, { borderColor: gameColor }]}
@@ -153,15 +181,36 @@ export default function TwoPlayerClock({ gameColor }: TwoPlayerClockProps) {
       <Modal visible={showEdit} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { borderColor: gameColor }]}>
-            <Text style={styles.modalTitle}>Set Time (minutes)</Text>
-            <TextInput
-              value={editMinutes}
-              onChangeText={setEditMinutes}
-              keyboardType="number-pad"
-              style={[styles.modalInput, { borderColor: gameColor }]}
-              placeholder="12"
-              placeholderTextColor="#666"
-            />
+            <Text style={styles.modalTitle}>Set Time - Player {editingPlayer}</Text>
+            
+            <View style={styles.timeInputContainer}>
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Minutes</Text>
+                <TextInput
+                  value={editMinutes}
+                  onChangeText={setEditMinutes}
+                  keyboardType="number-pad"
+                  style={[styles.modalInput, { borderColor: gameColor }]}
+                  placeholder="0"
+                  placeholderTextColor="#666"
+                />
+              </View>
+              
+              <Text style={styles.separator}>:</Text>
+              
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>Seconds</Text>
+                <TextInput
+                  value={editSeconds}
+                  onChangeText={setEditSeconds}
+                  keyboardType="number-pad"
+                  style={[styles.modalInput, { borderColor: gameColor }]}
+                  placeholder="0"
+                  placeholderTextColor="#666"
+                />
+              </View>
+            </View>
+
             <View style={styles.modalButtons}>
               <TouchableOpacity
                 onPress={() => setShowEdit(false)}
@@ -214,6 +263,20 @@ const styles = StyleSheet.create({
     padding: 8,
     borderWidth: 2
   },
+  editButton: {
+    paddingHorizontal: 6,
+    paddingVertical: 8
+  },
+  editButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4
+  },
+  editButtonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: 'bold'
+  },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.9)',
@@ -229,18 +292,41 @@ const styles = StyleSheet.create({
   modalTitle: {
     color: 'white',
     fontSize: 20,
-    marginBottom: 16,
+    marginBottom: 24,
     textAlign: 'center',
     fontWeight: 'bold'
+  },
+  timeInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 24
+  },
+  inputGroup: {
+    alignItems: 'center',
+    flex: 1
+  },
+  inputLabel: {
+    color: '#888',
+    fontSize: 14,
+    marginBottom: 8,
+    fontWeight: '600'
+  },
+  separator: {
+    color: 'white',
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginHorizontal: 12
   },
   modalInput: {
     backgroundColor: '#000',
     color: 'white',
     padding: 12,
-    fontSize: 18,
+    fontSize: 24,
     textAlign: 'center',
-    marginBottom: 16,
-    borderWidth: 2
+    borderWidth: 2,
+    width: '100%',
+    fontWeight: 'bold'
   },
   modalButtons: {
     flexDirection: 'row',
