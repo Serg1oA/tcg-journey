@@ -14,22 +14,22 @@ interface StrengthCounterProps {
 interface PlayerStats {
   melee: number;
   ranged: number;
-  artillery: number;
+  siege: number;
 }
 
 export default function StrengthCounter({ gameColor }: StrengthCounterProps) {
   const router = useRouter();
-  const [player1, setPlayer1] = useState<PlayerStats>({ melee: 0, ranged: 0, artillery: 0 });
-  const [player2, setPlayer2] = useState<PlayerStats>({ melee: 0, ranged: 0, artillery: 0 });
+  const [player1, setPlayer1] = useState<PlayerStats>({ melee: 0, ranged: 0, siege: 0 });
+  const [player2, setPlayer2] = useState<PlayerStats>({ melee: 0, ranged: 0, siege: 0 });
 
   const handleReset = () => {
-    setPlayer1({ melee: 0, ranged: 0, artillery: 0 });
-    setPlayer2({ melee: 0, ranged: 0, artillery: 0 });
+    setPlayer1({ melee: 0, ranged: 0, siege: 0 });
+    setPlayer2({ melee: 0, ranged: 0, siege: 0 });
   };
 
-  const getTotal = (player: PlayerStats) => player.melee + player.ranged + player.artillery;
+  const getTotal = (player: PlayerStats) => player.melee + player.ranged + player.siege;
 
-  const increment = (player: 1 | 2, field: 'melee' | 'ranged' | 'artillery', amount: number) => {
+  const increment = (player: 1 | 2, field: 'melee' | 'ranged' | 'siege', amount: number) => {
     if (player === 1) {
       setPlayer1(prev => ({ ...prev, [field]: Math.max(0, prev[field] + amount) }));
     } else {
@@ -48,7 +48,7 @@ export default function StrengthCounter({ gameColor }: StrengthCounterProps) {
     Icon: React.FC<{ width: number; height: number; stroke: string }>;
     value: number;
     player: 1 | 2;
-    field: 'melee' | 'ranged' | 'artillery';
+    field: 'melee' | 'ranged' | 'siege';
   }) => (
     <View style={styles.statField}>
       <View style={styles.statRow}>
@@ -103,9 +103,9 @@ export default function StrengthCounter({ gameColor }: StrengthCounterProps) {
         </View>
         
         <View style={styles.statsColumn}>
-          <StatField label="Artillery" Icon={CatapultIcon} value={player2.artillery} player={2} field="artillery" />
-          <StatField label="Ranged" Icon={BowIcon} value={player2.ranged} player={2} field="ranged" />
           <StatField label="Melee" Icon={SwordsIcon} value={player2.melee} player={2} field="melee" />
+          <StatField label="Ranged" Icon={BowIcon} value={player2.ranged} player={2} field="ranged" />
+          <StatField label="Siege" Icon={CatapultIcon} value={player2.siege} player={2} field="siege" />
         </View>
       </View>
 
@@ -137,7 +137,7 @@ export default function StrengthCounter({ gameColor }: StrengthCounterProps) {
         <View style={styles.statsColumn}>
           <StatField label="Melee" Icon={SwordsIcon} value={player1.melee} player={1} field="melee" />
           <StatField label="Ranged" Icon={BowIcon} value={player1.ranged} player={1} field="ranged" />
-          <StatField label="Artillery" Icon={CatapultIcon} value={player1.artillery} player={1} field="artillery" />
+          <StatField label="Siege" Icon={CatapultIcon} value={player1.siege} player={1} field="siege" />
         </View>
       </View>
     </View>
